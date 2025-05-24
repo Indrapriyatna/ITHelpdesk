@@ -3,6 +3,7 @@ package Main;
 
 import View.MenuDashboard;
 import View.MenuPegawai;
+import View.MenuPerangkat;
 import java.awt.Color;
 
 /**
@@ -904,15 +905,23 @@ public class MenuUtama extends javax.swing.JFrame {
     }//GEN-LAST:event_btnKategoriMouseExited
 
     private void btnPerangkatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPerangkatMouseClicked
-        // TODO add your handling code here:
+         pn_btnPerangkat.setBackground(new Color(240, 240, 240 ));
+         pn_line2.setBackground(new Color(0, 102, 153));
+         
+        pn_utama.removeAll();
+        pn_utama.add(new MenuPerangkat());
+        pn_utama.repaint();
+        pn_utama.revalidate();
     }//GEN-LAST:event_btnPerangkatMouseClicked
 
     private void btnPerangkatMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPerangkatMouseEntered
-        // TODO add your handling code here:
+         pn_btnPerangkat.setBackground(new Color(250, 250, 250 ));
+         pn_line2.setBackground(new Color(0, 102, 153));
     }//GEN-LAST:event_btnPerangkatMouseEntered
 
     private void btnPerangkatMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPerangkatMouseExited
-        // TODO add your handling code here:
+         pn_btnPerangkat.setBackground(new Color(255, 255, 255 ));
+         pn_line2.setBackground(new Color(255, 255, 255));
     }//GEN-LAST:event_btnPerangkatMouseExited
 
     private void btn_peminjamanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_peminjamanMouseClicked
