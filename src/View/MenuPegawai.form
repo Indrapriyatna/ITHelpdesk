@@ -279,9 +279,9 @@
                                       <Component id="jLabel6" min="-2" pref="220" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <Component id="jButtonCustom4" min="-2" pref="133" max="-2" attributes="0"/>
+                                      <Component id="btn_simpan" min="-2" pref="133" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                                      <Component id="jButtonCustom6" min="-2" pref="133" max="-2" attributes="0"/>
+                                      <Component id="btn_batal" min="-2" pref="133" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="txt_nip" alignment="0" min="-2" pref="1069" max="-2" attributes="0"/>
@@ -296,7 +296,7 @@
                                   <Component id="jLabel13" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="rb_Laki" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel15" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jDateChooser1" alignment="0" min="-2" pref="402" max="-2" attributes="0"/>
+                                  <Component id="jd_tanggal" alignment="0" min="-2" pref="402" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -330,8 +330,8 @@
                       </Group>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jButtonCustom4" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
-                          <Component id="jButtonCustom6" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
+                          <Component id="btn_simpan" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
+                          <Component id="btn_batal" alignment="3" min="-2" pref="45" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
@@ -363,7 +363,7 @@
                       <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                       <Component id="jLabel15" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jDateChooser1" min="-2" pref="41" max="-2" attributes="0"/>
+                      <Component id="jd_tanggal" min="-2" pref="41" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -412,7 +412,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="Castom.JButtonCustom" name="jButtonCustom4">
+            <Component class="Castom.JButtonCustom" name="btn_simpan">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/Image/save1.png"/>
@@ -423,7 +423,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="Castom.JButtonCustom" name="jButtonCustom6">
+            <Component class="Castom.JButtonCustom" name="btn_batal">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/Image/close1.png"/>
@@ -440,7 +440,7 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonCustom6ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_batalActionPerformed"/>
               </Events>
             </Component>
             <Component class="Castom.JtextCustom" name="txt_nip">
@@ -582,7 +582,7 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="com.toedter.calendar.JDateChooser" name="jDateChooser1">
+            <Component class="com.toedter.calendar.JDateChooser" name="jd_tanggal">
             </Component>
           </SubComponents>
         </Container>

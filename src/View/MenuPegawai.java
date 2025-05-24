@@ -46,8 +46,8 @@ public class MenuPegawai extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jButtonCustom4 = new Castom.JButtonCustom();
-        jButtonCustom6 = new Castom.JButtonCustom();
+        btn_simpan = new Castom.JButtonCustom();
+        btn_batal = new Castom.JButtonCustom();
         txt_nip = new Castom.JtextCustom();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
@@ -62,7 +62,7 @@ public class MenuPegawai extends javax.swing.JPanel {
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         txt_nama = new Castom.JtextCustom();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        jd_tanggal = new com.toedter.calendar.JDateChooser();
 
         setLayout(new java.awt.CardLayout());
 
@@ -200,18 +200,18 @@ public class MenuPegawai extends javax.swing.JPanel {
         jLabel8.setForeground(new java.awt.Color(102, 102, 102));
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/pegawaii.png"))); // NOI18N
 
-        jButtonCustom4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/save1.png"))); // NOI18N
-        jButtonCustom4.setText("SIMPAN");
-        jButtonCustom4.setFillOriginal(new java.awt.Color(0, 153, 255));
+        btn_simpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/save1.png"))); // NOI18N
+        btn_simpan.setText("SIMPAN");
+        btn_simpan.setFillOriginal(new java.awt.Color(0, 153, 255));
 
-        jButtonCustom6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/close1.png"))); // NOI18N
-        jButtonCustom6.setText("BATAL");
-        jButtonCustom6.setFillClick(new java.awt.Color(153, 0, 51));
-        jButtonCustom6.setFillOriginal(new java.awt.Color(255, 102, 0));
-        jButtonCustom6.setFillOver(new java.awt.Color(204, 102, 0));
-        jButtonCustom6.addActionListener(new java.awt.event.ActionListener() {
+        btn_batal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/close1.png"))); // NOI18N
+        btn_batal.setText("BATAL");
+        btn_batal.setFillClick(new java.awt.Color(153, 0, 51));
+        btn_batal.setFillOriginal(new java.awt.Color(255, 102, 0));
+        btn_batal.setFillOver(new java.awt.Color(204, 102, 0));
+        btn_batal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCustom6ActionPerformed(evt);
+                btn_batalActionPerformed(evt);
             }
         });
 
@@ -284,9 +284,9 @@ public class MenuPegawai extends javax.swing.JPanel {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelAddLayout.createSequentialGroup()
-                                .addComponent(jButtonCustom4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(28, 28, 28)
-                                .addComponent(jButtonCustom6, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(btn_batal, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txt_nip, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING)
@@ -300,7 +300,7 @@ public class MenuPegawai extends javax.swing.JPanel {
                             .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(rb_Laki, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jDateChooser1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jd_tanggal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(panelAddLayout.createSequentialGroup()
                         .addGap(149, 149, 149)
                         .addComponent(rb_perempuan)))
@@ -323,8 +323,8 @@ public class MenuPegawai extends javax.swing.JPanel {
                         .addComponent(jLabel5)))
                 .addGap(20, 20, 20)
                 .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonCustom4, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonCustom6, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btn_simpan, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_batal, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel9)
                 .addGap(13, 13, 13)
@@ -354,7 +354,7 @@ public class MenuPegawai extends javax.swing.JPanel {
                 .addGap(19, 19, 19)
                 .addComponent(jLabel15)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jd_tanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -369,22 +369,21 @@ public class MenuPegawai extends javax.swing.JPanel {
         panelMain.revalidate();
     }//GEN-LAST:event_jButtonCustom1ActionPerformed
 
-    private void jButtonCustom6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCustom6ActionPerformed
+    private void btn_batalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_batalActionPerformed
         panelMain.removeAll();
         panelMain.add(panelView);
         panelMain.revalidate();
-    }//GEN-LAST:event_jButtonCustom6ActionPerformed
+    }//GEN-LAST:event_btn_batalActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private Castom.JButtonCustom btn_batal;
+    private Castom.JButtonCustom btn_simpan;
     private javax.swing.ButtonGroup buttonGroup1;
     private Castom.JButtonCustom jButtonCustom1;
     private Castom.JButtonCustom jButtonCustom2;
     private Castom.JButtonCustom jButtonCustom3;
-    private Castom.JButtonCustom jButtonCustom4;
     private Castom.JButtonCustom jButtonCustom5;
-    private Castom.JButtonCustom jButtonCustom6;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -402,6 +401,7 @@ public class MenuPegawai extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane2;
     private Castom.JTableCastom jTableCastom2;
+    private com.toedter.calendar.JDateChooser jd_tanggal;
     private Castom.JtextCustom jtextCustom1;
     private javax.swing.JPanel panelAdd;
     private javax.swing.JPanel panelMain;
