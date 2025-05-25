@@ -83,13 +83,10 @@ public class MenuPegawai extends javax.swing.JPanel {
 
         jTableCastom2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
         jScrollPane2.setViewportView(jTableCastom2);
@@ -215,7 +212,7 @@ public class MenuPegawai extends javax.swing.JPanel {
             }
         });
 
-        txt_nip.setText("NIP");
+        txt_nip.setToolTipText("");
         txt_nip.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
 
         jLabel9.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N

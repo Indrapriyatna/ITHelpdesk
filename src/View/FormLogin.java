@@ -2,13 +2,25 @@
 package View;
 
 import Main.MenuUtama;
+import config.Database;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 public class FormLogin extends javax.swing.JFrame {
 
     int xx, xy;
+        private Connection conn;
     
     public FormLogin() {
-        initComponents();
+         initComponents();
+        conn = Database.getConnection();
+        if (conn == null) {
+            JOptionPane.showMessageDialog(this, "Koneksi database gagal!", "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
     }
 
     /**
@@ -159,11 +171,34 @@ public class FormLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_formMouseDragged
 
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
-        MenuUtama mn = new MenuUtama();
-        mn.setVisible(true);
-        mn.revalidate();
-        
-        dispose();
+  String username = jtextCustom1.getText();
+        String password = new String(jpasswordCustom1.getPassword());
+
+        // Validate input
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Username dan Password harus diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            String sql = "SELECT role FROM users WHERE username = ? AND password = ?";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            pst.setString(1, username);
+            pst.setString(2, password);
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                String role = rs.getString("role");
+                MenuUtama mn = new MenuUtama(role);
+                mn.setVisible(true);
+                mn.revalidate();
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Username atau Password salah!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btn_loginActionPerformed
 
     /**
