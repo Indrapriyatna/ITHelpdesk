@@ -38,8 +38,7 @@ public class MenuUtama extends javax.swing.JFrame {
         private void setAccessControl() {
         if ("user".equals(userRole)) {
             // Disable Master Data menus
-            pn_btnpegawai.setEnabled(false);
-            pn_btnPengguna.setEnabled(false);
+            pn_btnPengguna.setEnabled(true);
             pn_btnPerangkat.setEnabled(false);
             pn_btnkategori.setEnabled(false);
             // Disable Laporan menus
@@ -1116,7 +1115,7 @@ public class MenuUtama extends javax.swing.JFrame {
         
         pn_utama.removeAll();
         MenuPengguna pengguna = new MenuPengguna();
-        pengguna.setConnection(conn); // Assuming MenuPengguna has a setConnection method
+//        pengguna.setConnection(conn); // Assuming MenuPengguna has a setConnection method
         pn_utama.add(pengguna);
         pn_utama.repaint();
     }//GEN-LAST:event_btnPenggunaMouseClicked

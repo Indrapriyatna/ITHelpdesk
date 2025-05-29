@@ -67,7 +67,7 @@ public class MenuDashboard extends javax.swing.JPanel {
 
         lb_icon3.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         lb_icon3.setForeground(new java.awt.Color(0, 102, 153));
-        lb_icon3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Dashboartiket1.png"))); // NOI18N
+        lb_icon3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/Dashboartiket1.png"))); // NOI18N
 
         javax.swing.GroupLayout cardAnggotaLayout = new javax.swing.GroupLayout(cardAnggota);
         cardAnggota.setLayout(cardAnggotaLayout);
@@ -115,7 +115,7 @@ public class MenuDashboard extends javax.swing.JPanel {
 
         lb_icon1.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         lb_icon1.setForeground(new java.awt.Color(0, 102, 153));
-        lb_icon1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Dashboardpengadaan1.png"))); // NOI18N
+        lb_icon1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/Dashboardpengadaan1.png"))); // NOI18N
 
         javax.swing.GroupLayout cardAnggota1Layout = new javax.swing.GroupLayout(cardAnggota1);
         cardAnggota1.setLayout(cardAnggota1Layout);
@@ -165,7 +165,7 @@ public class MenuDashboard extends javax.swing.JPanel {
 
         lb_icon2.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         lb_icon2.setForeground(new java.awt.Color(0, 102, 153));
-        lb_icon2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Dashboardpeminjaman1.png"))); // NOI18N
+        lb_icon2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/Dashboardpeminjaman1.png"))); // NOI18N
 
         javax.swing.GroupLayout cardAnggota2Layout = new javax.swing.GroupLayout(cardAnggota2);
         cardAnggota2.setLayout(cardAnggota2Layout);

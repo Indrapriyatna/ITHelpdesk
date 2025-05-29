@@ -11,68 +11,165 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.swing.table.DefaultTableModel;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
+import model.PenggunaModelDB;
 
 /**
  *
  * @author Draaa
  */
-public class MenuPengguna extends javax.swing.JPanel {
-    DefaultTableModel model;
-    Connection conn;
+public final class MenuPengguna extends javax.swing.JPanel {
+    private TableRowSorter sorter;
     private boolean isEditMode = false;
     private int editUserId = -1;
+      PenggunaModelDB model = new PenggunaModelDB();
+  
     /**
      * Creates new form menuDashboard
      */
     public MenuPengguna() {
         initComponents();
-               conn = Database.getConnection(); // Or pass it via setConnection
-        tampilData();
-        
-    }
-        public void setConnection(Connection conn) {
-        this.conn = conn;
+//            
+           
+            tablePengguna.setModel(model);
+         tampilData();
+              setKolomTabel();
+              clearFields();
+              filter();
+              
+       
+             
     }
     
-private void tampilData() {
-    model = new DefaultTableModel();
-    model.addColumn("id");
-    model.addColumn("Username");
-    model.addColumn("Nama");
-    model.addColumn("Password");
-    model.addColumn("Role");
-    model.addColumn("Email");
-    model.addColumn("Create At");
-    jTableCastom2.setModel(model);
+    public void filter(){
+               sorter = new TableRowSorter<PenggunaModelDB>(model);
+    tablePengguna.setRowSorter(sorter);
+    
+    // Tambahkan DocumentListener untuk filtering real-time
+    Searching.getDocument().addDocumentListener(new DocumentListener() {
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            newFilter();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            newFilter();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            newFilter();
+        }
+
+            private void newFilter() {
+                RowFilter<PenggunaModelDB, Object> rf = null;
+    String searchText = Searching.getText();
+    
+    // Jangan filter jika teks adalah placeholder atau kosong
+    if (searchText.equals("Search") || searchText.isEmpty()) {
+        sorter.setRowFilter(null);
+        return;
+    }
 
     try {
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM users");
-        while (rs.next()) {
-            model.addRow(new Object[]{
-                rs.getInt("user_id"),
-                rs.getString("username"),
-                rs.getString("full_name"),
-                rs.getString("password"),
-                rs.getString("role"),
-                rs.getString("email"),
-                rs.getTimestamp("created_at")
-            });
+        // Filter pada kolom username (1), full_name (4), dan email (5)
+        // Gunakan (?i) untuk case-insensitive
+        rf = RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(searchText), 1, 4, 5);
+    } catch (java.util.regex.PatternSyntaxException e) {
+        System.err.println("Error pada pola regex: " + e.getMessage());
+        return;
+    }
+    sorter.setRowFilter(rf);
+            }
+    });
+    
+    
+    // Atur placeholder untuk Searching
+    Searching.setText("Search");
+    Searching.addFocusListener(new java.awt.event.FocusAdapter() {
+        @Override
+        public void focusGained(java.awt.event.FocusEvent evt) {
+            if (Searching.getText().equals("Search")) {
+                Searching.setText("");
+            }
         }
-    } catch (Exception e) {
-        System.out.println("Error: " + e.getMessage());
+
+        @Override
+        public void focusLost(java.awt.event.FocusEvent evt) {
+            if (Searching.getText().isEmpty()) {
+                Searching.setText("Search");
+            }
+        }
+    });
+    }
+    
+    
+   
+       public void setKolomTabel() {
+    // mengatur lebar kolom untuk masing-masing kolom
+    TableColumn column = null;
+    for (int i = 0; i < 7; i++) {
+        column = tablePengguna.getColumnModel().getColumn(i);
+        switch(i) {
+            case 0: column.setPreferredWidth(50); break;
+            case 1: column.setPreferredWidth(50); break;
+            case 2: column.setPreferredWidth(50); break;
+            case 3: column.setPreferredWidth(50); break;
+            case 4: column.setPreferredWidth(50); break;
+            case 5: column.setPreferredWidth(50); break;
+            case 6: column.setPreferredWidth(50); break;
+        }
     }
 }
+       
+  
+        
+private void tampilData() {
+  model.removeAllRows();
 
-         private void clearFields() {
+        // melakukan koneksi ke database dan tabel via KoneksiDB
+        try {
+            Connection c = Database.getConnection();
+            Statement s = c.createStatement();
+            String sql = "SELECT * FROM users";
+            ResultSet r = s.executeQuery(sql);
+
+            while (r.next()) {
+                // lakukan penelusuran baris
+                Object[] o = new Object[7];
+                o[0] = r.getString("user_id");
+                o[1] = r.getString("username");
+                o[2] = r.getString("password");
+                o[3] = r.getString("role");
+                o[4] = r.getString("full_name");
+                o[5] = r.getString("email");
+                o[6] = r.getString("created_at");
+   
+
+                model.addRow(Arrays.asList(o));
+            }
+        } catch (SQLException e) {
+            System.out.println("Terjadi error menampilkan data di tabel!");
+        }
+}
+
+         private void clearFields() { //mengosongkan isian pada form
       txt_username.setText("");
         txt_nama.setText("");
           txt_password.setText("");
-        jComboBox1.setSelectedIndex(0);
+        cboRole.setSelectedIndex(0);
         txt_email.setText("");
-
     }
+         
+         
+         
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -89,21 +186,20 @@ private void tampilData() {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTableCastom2 = new Castom.JTableCastom();
         jLabel4 = new javax.swing.JLabel();
-        jButtonCustom1 = new Castom.JButtonCustom();
-        jButtonCustom2 = new Castom.JButtonCustom();
-        jButtonCustom3 = new Castom.JButtonCustom();
-        jtextCustom1 = new Castom.JtextCustom();
-        jButtonCustom5 = new Castom.JButtonCustom();
+        btnTambah = new Castom.JButtonCustom();
+        btnEdit = new Castom.JButtonCustom();
+        Searching = new Castom.JtextCustom();
+        btnHapus = new Castom.JButtonCustom();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablePengguna = new javax.swing.JTable();
         panelAdd = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jButtonCustom4 = new Castom.JButtonCustom();
-        jButtonCustom6 = new Castom.JButtonCustom();
+        btnSimpan = new Castom.JButtonCustom();
+        btnBatal = new Castom.JButtonCustom();
         txt_username = new Castom.JtextCustom();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
@@ -113,7 +209,7 @@ private void tampilData() {
         jLabel16 = new javax.swing.JLabel();
         txt_nama = new Castom.JtextCustom();
         jLabel14 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cboRole = new javax.swing.JComboBox<>();
 
         setLayout(new java.awt.CardLayout());
 
@@ -130,87 +226,95 @@ private void tampilData() {
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
         jLabel2.setText("Master Data > Pengguna");
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/pegawaii.png"))); // NOI18N
-
-        jTableCastom2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
-        jScrollPane2.setViewportView(jTableCastom2);
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/profile.png"))); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/pegawaii.png"))); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/profile.png"))); // NOI18N
 
-        jButtonCustom1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/add .png"))); // NOI18N
-        jButtonCustom1.setText("TAMBAH");
-        jButtonCustom1.addActionListener(new java.awt.event.ActionListener() {
+        btnTambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/add .png"))); // NOI18N
+        btnTambah.setText("TAMBAH");
+        btnTambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCustom1ActionPerformed(evt);
+                btnTambahActionPerformed(evt);
             }
         });
 
-        jButtonCustom2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/edit (2).png"))); // NOI18N
-        jButtonCustom2.setText("EDIT");
-        jButtonCustom2.setFillClick(new java.awt.Color(0, 153, 51));
-        jButtonCustom2.setFillOriginal(new java.awt.Color(0, 255, 51));
-        jButtonCustom2.setFillOver(new java.awt.Color(0, 153, 0));
-        jButtonCustom2.addActionListener(new java.awt.event.ActionListener() {
+        btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/edit (2).png"))); // NOI18N
+        btnEdit.setText("EDIT");
+        btnEdit.setFillClick(new java.awt.Color(0, 153, 51));
+        btnEdit.setFillOriginal(new java.awt.Color(0, 255, 51));
+        btnEdit.setFillOver(new java.awt.Color(0, 153, 0));
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCustom2ActionPerformed(evt);
+                btnEditActionPerformed(evt);
             }
         });
 
-        jButtonCustom3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/close1.png"))); // NOI18N
-        jButtonCustom3.setText("BATAL");
-        jButtonCustom3.setFillClick(new java.awt.Color(153, 0, 51));
-        jButtonCustom3.setFillOriginal(new java.awt.Color(255, 102, 0));
-        jButtonCustom3.setFillOver(new java.awt.Color(204, 102, 0));
-
-        jtextCustom1.setText("Search");
-        jtextCustom1.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
-
-        jButtonCustom5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/trash (1).png"))); // NOI18N
-        jButtonCustom5.setText("HAPUS");
-        jButtonCustom5.setFillClick(new java.awt.Color(153, 0, 51));
-        jButtonCustom5.setFillOriginal(new java.awt.Color(255, 0, 51));
-        jButtonCustom5.setFillOver(new java.awt.Color(204, 0, 51));
-        jButtonCustom5.addActionListener(new java.awt.event.ActionListener() {
+        Searching.setText("Search");
+        Searching.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
+        Searching.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCustom5ActionPerformed(evt);
+                SearchingActionPerformed(evt);
             }
         });
+
+        btnHapus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/trash (1).png"))); // NOI18N
+        btnHapus.setText("HAPUS");
+        btnHapus.setFillClick(new java.awt.Color(153, 0, 51));
+        btnHapus.setFillOriginal(new java.awt.Color(255, 0, 51));
+        btnHapus.setFillOver(new java.awt.Color(204, 0, 51));
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHapusActionPerformed(evt);
+            }
+        });
+
+        tablePengguna.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6", "Title 7"
+            }
+        ));
+        tablePengguna.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablePenggunaMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tablePengguna);
 
         javax.swing.GroupLayout panelViewLayout = new javax.swing.GroupLayout(panelView);
         panelView.setLayout(panelViewLayout);
         panelViewLayout.setHorizontalGroup(
             panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelViewLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(panelViewLayout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelViewLayout.createSequentialGroup()
-                        .addComponent(jButtonCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButtonCustom2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(16, 16, 16)
-                        .addComponent(jButtonCustom5, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonCustom3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(76, 76, 76)
-                        .addComponent(jtextCustom1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(panelViewLayout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jLabel1)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel3)
+                            .addGap(18, 18, 18)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelViewLayout.createSequentialGroup()
+                            .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(16, 16, 16)
+                            .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(218, 218, 218)
+                            .addComponent(Searching, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))))
                 .addGap(20, 20, 20))
         );
         panelViewLayout.setVerticalGroup(
@@ -230,13 +334,12 @@ private void tampilData() {
                         .addComponent(jLabel1)))
                 .addGap(27, 27, 27)
                 .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonCustom2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonCustom3, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jtextCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonCustom5, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
+                    .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Searching, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -258,23 +361,23 @@ private void tampilData() {
         jLabel8.setForeground(new java.awt.Color(102, 102, 102));
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/profile.png"))); // NOI18N
 
-        jButtonCustom4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/save1.png"))); // NOI18N
-        jButtonCustom4.setText("SIMPAN");
-        jButtonCustom4.setFillOriginal(new java.awt.Color(0, 153, 255));
-        jButtonCustom4.addActionListener(new java.awt.event.ActionListener() {
+        btnSimpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/save1.png"))); // NOI18N
+        btnSimpan.setText("SIMPAN");
+        btnSimpan.setFillOriginal(new java.awt.Color(0, 153, 255));
+        btnSimpan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCustom4ActionPerformed(evt);
+                btnSimpanActionPerformed(evt);
             }
         });
 
-        jButtonCustom6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/close1.png"))); // NOI18N
-        jButtonCustom6.setText("BATAL");
-        jButtonCustom6.setFillClick(new java.awt.Color(153, 0, 51));
-        jButtonCustom6.setFillOriginal(new java.awt.Color(255, 102, 0));
-        jButtonCustom6.setFillOver(new java.awt.Color(204, 102, 0));
-        jButtonCustom6.addActionListener(new java.awt.event.ActionListener() {
+        btnBatal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/close1.png"))); // NOI18N
+        btnBatal.setText("BATAL");
+        btnBatal.setFillClick(new java.awt.Color(153, 0, 51));
+        btnBatal.setFillOriginal(new java.awt.Color(255, 102, 0));
+        btnBatal.setFillOver(new java.awt.Color(204, 102, 0));
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCustom6ActionPerformed(evt);
+                btnBatalActionPerformed(evt);
             }
         });
 
@@ -349,7 +452,7 @@ private void tampilData() {
         jLabel14.setForeground(new java.awt.Color(102, 102, 102));
         jLabel14.setText("Role");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "User", " " }));
+        cboRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "User" }));
 
         javax.swing.GroupLayout panelAddLayout = new javax.swing.GroupLayout(panelAdd);
         panelAdd.setLayout(panelAddLayout);
@@ -367,9 +470,9 @@ private void tampilData() {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelAddLayout.createSequentialGroup()
-                        .addComponent(jButtonCustom4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(28, 28, 28)
-                        .addComponent(jButtonCustom6, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txt_username, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING)
@@ -379,7 +482,7 @@ private void tampilData() {
                     .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txt_email, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cboRole, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20))
         );
         panelAddLayout.setVerticalGroup(
@@ -399,8 +502,8 @@ private void tampilData() {
                         .addComponent(jLabel5)))
                 .addGap(20, 20, 20)
                 .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonCustom4, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonCustom6, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel9)
                 .addGap(13, 13, 13)
@@ -416,7 +519,7 @@ private void tampilData() {
                 .addGap(13, 13, 13)
                 .addComponent(jLabel14)
                 .addGap(4, 4, 4)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cboRole, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -429,67 +532,101 @@ private void tampilData() {
         add(panelMain, "card2");
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonCustom1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCustom1ActionPerformed
+    private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         panelMain.removeAll();
         panelMain.add(panelAdd);
         panelMain.revalidate();
-    }//GEN-LAST:event_jButtonCustom1ActionPerformed
+    }//GEN-LAST:event_btnTambahActionPerformed
 
     private void txt_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_passwordActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_passwordActionPerformed
 
-    private void jButtonCustom6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCustom6ActionPerformed
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
         panelMain.removeAll();
         panelMain.add(panelView);
         panelMain.revalidate();
-    }//GEN-LAST:event_jButtonCustom6ActionPerformed
+    }//GEN-LAST:event_btnBatalActionPerformed
 
-    private void jButtonCustom4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCustom4ActionPerformed
-     try {
-        // Validate input fields
-        if (txt_username.getText().isEmpty() || txt_nama.getText().isEmpty() || 
-            txt_password.getText().isEmpty() || txt_email.getText().isEmpty() || 
-            jComboBox1.getSelectedItem() == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Semua kolom harus diisi!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+    // TODO add your handling code here:
+    // mengambil nilai-nilai isian pada form
+String username = txt_username.getText();
+    String password = txt_password.getText();
+    String nama = txt_nama.getText();
+    String role = cboRole.getSelectedItem().toString();
+    String email = txt_email.getText();
 
-        // Validate email format (basic check)
-        String email = txt_email.getText();
-        if (email.equals("Email") || !email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Format email tidak valid!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Insert data into the database
-        String sql = "INSERT INTO users (username, full_name, password, role, email, created_at) VALUES (?, ?, ?, ?, ?, ?)";
-        PreparedStatement pst = conn.prepareStatement(sql);
-        pst.setString(1, txt_username.getText());
-        pst.setString(2, txt_nama.getText());
-        pst.setString(3, txt_password.getText());
-        pst.setString(4, (String) jComboBox1.getSelectedItem());
-        pst.setString(5, txt_email.getText());
-        pst.setTimestamp(6, new java.sql.Timestamp(System.currentTimeMillis()));
-        int rowsInserted = pst.executeUpdate();
-
-        if (rowsInserted > 0) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Data pengguna berhasil ditambahkan!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            tampilData();
-            clearFields();
-            // Switch back to the view panel
-            panelMain.removeAll();
-            panelMain.add(panelView);
-            panelMain.revalidate();
-        }
-    } catch (NullPointerException e) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Error: Koneksi database tidak tersedia. Periksa koneksi Anda!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-    } catch (SQLException e) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-    } catch (Exception e) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Error: Terjadi kesalahan tak terduga - " + e.toString(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+    // Validasi input
+    if (username.isEmpty() || password.isEmpty() || nama.isEmpty() || role.isEmpty() || email.isEmpty() || email.equals("Email")) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Semua kolom harus diisi dengan data yang valid!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
     }
-    }//GEN-LAST:event_jButtonCustom4ActionPerformed
+
+    // Validasi format email
+    if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Format email tidak valid!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    try {
+        Connection c = Database.getConnection();
+        if (c == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Koneksi ke database gagal!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (isEditMode) {
+            // Mode edit: update data
+            String sql = "UPDATE users SET username = ?, password = ?, full_name = ?, role = ?, email = ?, created_at = ? WHERE user_id = ?";
+            PreparedStatement p = c.prepareStatement(sql);
+            p.setString(1, username);
+            p.setString(2, password);
+            p.setString(3, nama);
+            p.setString(4, role);
+            p.setString(5, email);
+            p.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+            p.setInt(7, editUserId);
+            int rowsUpdated = p.executeUpdate();
+            p.close();
+
+            if (rowsUpdated > 0) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Data pengguna berhasil diperbarui!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal memperbarui data pengguna!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            // Mode tambah: insert data
+            String sql = "INSERT INTO users (username, password, full_name, role, email, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement p = c.prepareStatement(sql);
+            p.setString(1, username);
+            p.setString(2, password);
+            p.setString(3, nama);
+            p.setString(4, role);
+            p.setString(5, email);
+            p.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+            int rowsInserted = p.executeUpdate();
+            p.close();
+
+            if (rowsInserted > 0) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Data pengguna berhasil ditambahkan!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+
+        // Perbarui tabel dan kembali ke panelView
+        tampilData();
+        clearFields();
+        isEditMode = false;
+        editUserId = -1;
+        jLabel5.setText("Tambah Data Pengguna");
+        panelMain.removeAll();
+        panelMain.add(panelView);
+        panelMain.revalidate();
+    } catch (SQLException e) {
+        System.err.println("Error saat " + (isEditMode ? "memperbarui" : "menambah") + " data ke database: " + e.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal " + (isEditMode ? "memperbarui" : "menambah") + " data: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void txt_usernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_usernameActionPerformed
         // TODO add your handling code here:
@@ -497,6 +634,7 @@ private void tampilData() {
 
     private void txt_emailFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_emailFocusGained
         // TODO add your handling code here:
+        txt_email.setText("Email");
                if (txt_email.getText().equals("Email")) {
                 txt_email.setText("");
             }
@@ -509,124 +647,133 @@ private void tampilData() {
             }
     }//GEN-LAST:event_txt_emailFocusLost
 
-    private void jButtonCustom2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCustom2ActionPerformed
-        // TODO add your handling code here:
-    int selectedRow = jTableCastom2.getSelectedRow();
-    if (selectedRow == -1) {
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+int index = tablePengguna.getSelectedRow();
+
+    // Jika tidak ada baris terseleksi, tampilkan peringatan
+    if (index == -1) {
         javax.swing.JOptionPane.showMessageDialog(this, "Pilih data yang akan diedit!", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
         return;
     }
 
-    // Retrieve data from the selected row
-    editUserId = (int) model.getValueAt(selectedRow, 0); // user_id
-    String username = (String) model.getValueAt(selectedRow, 1);
-    String fullName = (String) model.getValueAt(selectedRow, 2);
-    String password = (String) model.getValueAt(selectedRow, 3);
-    String role = (String) model.getValueAt(selectedRow, 4);
-    String email = (String) model.getValueAt(selectedRow, 5);
+    // Ambil data dari baris yang dipilih
+    editUserId = Integer.parseInt(model.getValueAt(index, 0).toString()); // user_id
+    String username = model.getValueAt(index, 1).toString();
+    String password = model.getValueAt(index, 2).toString();
+    String role = model.getValueAt(index, 3).toString();
+    String fullName = model.getValueAt(index, 4).toString();
+    String email = model.getValueAt(index, 5).toString();
 
-    // Populate the form fields in panelAdd
+    // Isi field input dengan data
     txt_username.setText(username);
-    txt_nama.setText(fullName);
     txt_password.setText(password);
-    jComboBox1.setSelectedItem(role);
+    txt_nama.setText(fullName);
+    cboRole.setSelectedItem(role);
     txt_email.setText(email);
 
-    // Update the panel title and switch to panelAdd
+    // Ubah judul panel dan beralih ke panelAdd
     isEditMode = true;
     jLabel5.setText("Edit Data Pengguna");
     panelMain.removeAll();
     panelMain.add(panelAdd);
     panelMain.revalidate();
-    }//GEN-LAST:event_jButtonCustom2ActionPerformed
 
-    private void jButtonCustom5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCustom5ActionPerformed
-        // TODO add your handling code here:
-          int selectedRow = jTableCastom2.getSelectedRow();
-    if (selectedRow == -1) {
+
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+int index = tablePengguna.getSelectedRow();
+
+    // Jika tidak ada baris terseleksi, tampilkan peringatan
+    if (index == -1) {
         javax.swing.JOptionPane.showMessageDialog(this, "Pilih data yang akan dihapus!", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
         return;
     }
 
+    // Konfirmasi penghapusan
     int confirm = javax.swing.JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi Hapus", javax.swing.JOptionPane.YES_NO_OPTION);
     if (confirm != javax.swing.JOptionPane.YES_OPTION) {
         return;
     }
 
+    // Ambil user_id dari baris yang dipilih
+    int userId;
     try {
-        int userId = (int) model.getValueAt(selectedRow, 0); // user_id is in the first column
+        userId = Integer.parseInt(model.getValueAt(index, 0).toString());
+    } catch (NumberFormatException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "ID pengguna tidak valid!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // Hapus data dari database
+    try {
+        Connection c = Database.getConnection();
+        if (c == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Koneksi ke database gagal!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         String sql = "DELETE FROM users WHERE user_id = ?";
-        PreparedStatement pst = conn.prepareStatement(sql);
-        pst.setInt(1, userId);
-        int rowsDeleted = pst.executeUpdate();
+        PreparedStatement p = c.prepareStatement(sql);
+        p.setInt(1, userId);
+        int rowsDeleted = p.executeUpdate();
+        p.close();
 
         if (rowsDeleted > 0) {
             javax.swing.JOptionPane.showMessageDialog(this, "Data pengguna berhasil dihapus!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            tampilData(); // Refresh the table
+            tampilData(); // Muat ulang data dari database
         } else {
             javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus data pengguna!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     } catch (SQLException e) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        System.err.println("Error menghapus data dari database: " + e.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus data: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
     }
-    }//GEN-LAST:event_jButtonCustom5ActionPerformed
+
+    }//GEN-LAST:event_btnHapusActionPerformed
 
     private void txt_usernameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_usernameFocusGained
- String text = txt_username.getText();
-    if (text != null && text.equals("Username")) {
-        txt_username.setText("");
-    }
+
     }//GEN-LAST:event_txt_usernameFocusGained
     
     private void txt_usernameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_usernameFocusLost
-        // TODO add your handling code here:
-         String text = txt_username.getText();
-    if (text == null || text.isEmpty()) {
-        txt_username.setText("Username");
-    }
+
     }//GEN-LAST:event_txt_usernameFocusLost
 
     private void txt_namaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_namaFocusGained
-        // TODO add your handling code here:
-         String text = txt_nama.getText();
-    if (text != null && text.equals("Nama")) {
-        txt_nama.setText("");
-    }
+
     }//GEN-LAST:event_txt_namaFocusGained
 
     private void txt_namaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_namaFocusLost
-        // TODO add your handling code here:
-                 String text = txt_nama.getText();
-    if (text == null || text.isEmpty()) {
-        txt_nama.setText("Nama");
-    }
+
     }//GEN-LAST:event_txt_namaFocusLost
 
     private void txt_passwordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_passwordFocusGained
-         String text = txt_password.getText();
-    if (text != null && text.equals("Password")) {
-        txt_password.setText("");
-    }
+
     }//GEN-LAST:event_txt_passwordFocusGained
 
     private void txt_passwordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_passwordFocusLost
-        // TODO add your handling code here:
-                         String text = txt_password.getText();
-    if (text == null || text.isEmpty()) {
-        txt_password.setText("Password");
-    }
+
     }//GEN-LAST:event_txt_passwordFocusLost
+
+    private void tablePenggunaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablePenggunaMouseClicked
+
+    }//GEN-LAST:event_tablePenggunaMouseClicked
+
+    private void SearchingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchingActionPerformed
+      
+    }//GEN-LAST:event_SearchingActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private Castom.JtextCustom Searching;
+    private Castom.JButtonCustom btnBatal;
+    private Castom.JButtonCustom btnEdit;
+    private Castom.JButtonCustom btnHapus;
+    private Castom.JButtonCustom btnSimpan;
+    private Castom.JButtonCustom btnTambah;
     private javax.swing.ButtonGroup buttonGroup1;
-    private Castom.JButtonCustom jButtonCustom1;
-    private Castom.JButtonCustom jButtonCustom2;
-    private Castom.JButtonCustom jButtonCustom3;
-    private Castom.JButtonCustom jButtonCustom4;
-    private Castom.JButtonCustom jButtonCustom5;
-    private Castom.JButtonCustom jButtonCustom6;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> cboRole;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -640,12 +787,11 @@ private void tampilData() {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JScrollPane jScrollPane2;
-    private Castom.JTableCastom jTableCastom2;
-    private Castom.JtextCustom jtextCustom1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel panelAdd;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
+    private javax.swing.JTable tablePengguna;
     private Castom.JtextCustom txt_email;
     private Castom.JtextCustom txt_nama;
     private Castom.JtextCustom txt_password;
