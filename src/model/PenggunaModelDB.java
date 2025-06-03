@@ -22,7 +22,7 @@ public class PenggunaModelDB extends AbstractTableModel {
         columnNames.add("Id");
         columnNames.add("Username");
         columnNames.add("Password");
-            columnNames.add("Role");
+        columnNames.add("Role");
         columnNames.add("Nama");
         columnNames.add("Email");
         columnNames.add("Created At");

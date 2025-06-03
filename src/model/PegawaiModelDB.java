@@ -22,7 +22,7 @@ public class PegawaiModelDB extends AbstractTableModel {
         columnNames.add("Id");
         columnNames.add("Nip");
         columnNames.add("Nama");
-            columnNames.add("Jabatan");
+        columnNames.add("Jabatan");
         columnNames.add("No Telp");
         columnNames.add("Kelamin");
         columnNames.add("Tanggal Bergabung");
@@ -69,8 +69,7 @@ public class PegawaiModelDB extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        return data.get(row).get(col);
-        
+        return data.get(row).get(col); 
     }
     
     public void setValueAt(Object value, int row, int col){

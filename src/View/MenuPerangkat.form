@@ -205,6 +205,9 @@
                   <Color blue="33" green="0" red="cc" type="rgb"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnHapusActionPerformed"/>
+              </Events>
             </Component>
             <Component class="Castom.JtextCustom" name="Searching">
               <Properties>
@@ -230,6 +233,9 @@
                   <Color blue="0" green="99" red="0" type="rgb"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEditActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

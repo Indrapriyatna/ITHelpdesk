@@ -17,7 +17,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
-import model.PegawaiModelDB;
 import model.PerangkatModelDB;
 
 /**
@@ -27,7 +26,7 @@ import model.PerangkatModelDB;
 public class MenuPerangkat extends javax.swing.JPanel {
   private TableRowSorter sorter;
     private boolean isEditMode = false;
-    private int editUserId = -1;
+    private int editDeviceId = -1;
     PerangkatModelDB model = new PerangkatModelDB();
     /**
      * Creates new form menuDashboard
@@ -80,8 +79,8 @@ public class MenuPerangkat extends javax.swing.JPanel {
                 }
 
                 try {
-                    // Filter pada kolom NIP (1), Nama (2), dan Jabatan (3)
-                    rf = RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(searchText), 1, 2, 3);
+                    // Filter pada kolom Nama (1), Tipe (2), dan Status (3)
+                    rf = RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(searchText), 1, 2, 7);
                 } catch (java.util.regex.PatternSyntaxException e) {
                     System.err.println("Error pada pola regex: " + e.getMessage());
                     return;
@@ -128,7 +127,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
     }
 
     private void tampilData() {
-        model.removeAllRows();
+           model.removeAllRows();
         Connection c = null;
         Statement s = null;
         ResultSet r = null;
@@ -153,14 +152,14 @@ public class MenuPerangkat extends javax.swing.JPanel {
                 o[4] = r.getString("merk");
                 o[5] = r.getString("model");
                 o[6] = r.getString("tgl_pembelian");
-                o[7] = r.getString("status");
+                  o[7] = r.getString("status");
                 model.addRow(Arrays.asList(o));
                 rowCount++;
             }
             if (rowCount == 0) {
                 System.out.println("Tabel perangkat kosong atau tidak ada data yang ditemukan.");
             } else {
-                System.out.println("Berhasil memuat " + rowCount + " baris data dari tabel pegawai.");
+                System.out.println("Berhasil memuat " + rowCount + " baris data dari tabel perangkats.");
             }
         } catch (SQLException e) {
             System.err.println("Terjadi error menampilkan data di tabel: " + e.getMessage());
@@ -278,6 +277,11 @@ public class MenuPerangkat extends javax.swing.JPanel {
         btnHapus.setFillClick(new java.awt.Color(153, 0, 51));
         btnHapus.setFillOriginal(new java.awt.Color(255, 0, 51));
         btnHapus.setFillOver(new java.awt.Color(204, 0, 51));
+        btnHapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHapusActionPerformed(evt);
+            }
+        });
 
         Searching.setText("Search");
         Searching.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
@@ -287,6 +291,11 @@ public class MenuPerangkat extends javax.swing.JPanel {
         btnEdit.setFillClick(new java.awt.Color(0, 153, 51));
         btnEdit.setFillOriginal(new java.awt.Color(0, 255, 51));
         btnEdit.setFillOver(new java.awt.Color(0, 153, 0));
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelViewLayout = new javax.swing.GroupLayout(panelView);
         panelView.setLayout(panelViewLayout);
@@ -521,15 +530,21 @@ public class MenuPerangkat extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
+       clearFields();
+        isEditMode = false;
+        editDeviceId = -1;
+        jLabel5.setText("Tambah Data Perangkat");
         panelMain.removeAll();
         panelMain.add(panelAdd);
         panelMain.revalidate();
+        panelMain.repaint();
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
         panelMain.removeAll();
         panelMain.add(panelView);
         panelMain.revalidate();
+        panelMain.repaint();
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
@@ -561,7 +576,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
 
             String sql;
             if (isEditMode) {
-                sql = "UPDATE perangkat SET nama_perangkat = ?, device_type = ?, serial_number = ?, merk = ?, model = ?, tgl_pembelian = ?, status = ? WHERE id = ?";
+                sql = "UPDATE perangkat SET nama_perangkat = ?, device_type = ?, serial_number = ?, merk = ?, model = ?, tgl_pembelian = ?, status = ? WHERE device_id = ?";
                 p = c.prepareStatement(sql);
                 p.setString(1, nama);
                 p.setString(2, tipe);
@@ -570,7 +585,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
                 p.setString(5, model_perangkat);
                 p.setDate(6, new java.sql.Date(tanggal_beli.getTime()));
                 p.setString(7, status);
-                p.setInt(8, editUserId);
+                p.setInt(8, editDeviceId);
                 int rowsUpdated = p.executeUpdate();
                 if (rowsUpdated > 0) {
                     javax.swing.JOptionPane.showMessageDialog(this, "Data pegawai berhasil diperbarui!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
@@ -597,7 +612,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
             tampilData();
             clearFields();
             isEditMode = false;
-            editUserId = -1;
+            editDeviceId = -1;
             jLabel5.setText("Tambah Data Perangkat");
             panelMain.removeAll();
             panelMain.add(panelView);
@@ -615,6 +630,101 @@ public class MenuPerangkat extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
+
+    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+        // TODO add your handling code here:
+         int index = tablePerangkat.getSelectedRow();
+
+        // Jika tidak ada baris terseleksi, tampilkan peringatan
+        if (index == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih data yang akan diedit!", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Ambil data dari baris yang dipilih
+        editDeviceId = Integer.parseInt(model.getValueAt(index, 0).toString()); // id
+        String nama = model.getValueAt(index, 1).toString();
+        String tipe = model.getValueAt(index, 2).toString();
+        String serial = model.getValueAt(index, 3).toString();
+        String merk = model.getValueAt(index, 4).toString();
+        String model_perangkat = model.getValueAt(index, 5).toString();
+         String tanggal_beli = model.getValueAt(index, 6).toString();
+        String status = model.getValueAt(index, 7).toString();
+
+        // Isi field input dengan data
+        txt_nama.setText(nama);
+           cboTipe.setSelectedItem(tipe);
+        txt_serial.setText(serial);
+        txt_merk.setText(merk);
+           txt_model.setText(model_perangkat);
+        try {
+            tanggal.setDate(new java.text.SimpleDateFormat("yyyy-MM-dd").parse(tanggal_beli));
+        } catch (java.text.ParseException e) {
+            tanggal.setDate(null);
+        }
+            txt_status.setText(status);
+
+        // Ubah judul panel dan beralih ke panelAdd
+        isEditMode = true;
+        jLabel5.setText("Edit Data Perangkat");
+        panelMain.removeAll();
+        panelMain.add(panelAdd);
+        panelMain.revalidate();
+        panelMain.repaint();
+    }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
+        // TODO add your handling code here:
+           // TODO add your handling code here:
+        int index = tablePerangkat.getSelectedRow();
+
+        // Jika tidak ada baris terseleksi, tampilkan peringatan
+        if (index == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih data yang akan dihapus!", "Peringatan", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Konfirmasi penghapusan
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi Hapus", javax.swing.JOptionPane.YES_NO_OPTION);
+        if (confirm != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        // Ambil id dari baris yang dipilih
+        int id;
+        try {
+            id = Integer.parseInt(model.getValueAt(index, 0).toString());
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "ID perangkat tidak valid!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Hapus data dari database
+        try {
+            Connection c = Database.getConnection();
+            if (c == null) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Koneksi ke database gagal!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            String sql = "DELETE FROM perangkat WHERE device_id = ?";
+            PreparedStatement p = c.prepareStatement(sql);
+            p.setInt(1, id);
+            int rowsDeleted = p.executeUpdate();
+            p.close();
+            c.close();
+
+            if (rowsDeleted > 0) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Data perangkat berhasil dihapus!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                tampilData(); // Muat ulang data dari database
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus data perangkat!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error menghapus data dari database: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus data: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnHapusActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
