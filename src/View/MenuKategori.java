@@ -17,23 +17,23 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
-import model.PerangkatModelDB;
-
+import model.PegawaiModelDB;
 /**
  *
  * @author Draaa
  */
-public class MenuPerangkat extends javax.swing.JPanel {
-  private TableRowSorter sorter;
+public final class MenuKategori extends javax.swing.JPanel {
+    private TableRowSorter sorter;
     private boolean isEditMode = false;
-    private int editDeviceId = -1;
-    PerangkatModelDB model = new PerangkatModelDB();
+    private int editUserId = -1;
+    PegawaiModelDB model = new PegawaiModelDB();
+  
     /**
      * Creates new form menuDashboard
      */
-    public MenuPerangkat() {
+    public MenuKategori() {
         initComponents();
-         tablePerangkat.setModel(model);
+       tableKategori.setModel(model);
         tampilData();
         setKolomTabel();
         clearFields();
@@ -41,9 +41,9 @@ public class MenuPerangkat extends javax.swing.JPanel {
         
     }
     
-    public void filter() {
-        sorter = new TableRowSorter<PerangkatModelDB>(model);
-        tablePerangkat.setRowSorter(sorter);
+ public void filter() {
+        sorter = new TableRowSorter<PegawaiModelDB>(model);
+        tableKategori.setRowSorter(sorter);
 
         // Tambahkan DocumentListener untuk filtering real-time
         Searching.getDocument().addDocumentListener(new DocumentListener() {
@@ -63,7 +63,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
             }
 
             private void newFilter() {
-                RowFilter<PerangkatModelDB, Object> rf = null;
+                RowFilter<PegawaiModelDB, Object> rf = null;
                 String searchText = Searching.getText();
 
                 // Jangan filter jika teks adalah placeholder atau kosong
@@ -79,8 +79,8 @@ public class MenuPerangkat extends javax.swing.JPanel {
                 }
 
                 try {
-                    // Filter pada kolom Nama (1), Tipe (2), dan Status (3)
-                    rf = RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(searchText), 1, 2, 7);
+                    // Filter pada kolom NIP (1), Nama (2), dan Jabatan (3)
+                    rf = RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(searchText), 1, 2, 3);
                 } catch (java.util.regex.PatternSyntaxException e) {
                     System.err.println("Error pada pola regex: " + e.getMessage());
                     return;
@@ -111,8 +111,8 @@ public class MenuPerangkat extends javax.swing.JPanel {
     public void setKolomTabel() {
         // Mengatur lebar kolom untuk masing-masing kolom
         TableColumn column = null;
-        for (int i = 0; i < 8; i++) {
-            column = tablePerangkat.getColumnModel().getColumn(i);
+        for (int i = 0; i < 7; i++) {
+            column = tableKategori.getColumnModel().getColumn(i);
             switch (i) {
                 case 0: column.setPreferredWidth(50); break;
                 case 1: column.setPreferredWidth(100); break;
@@ -121,13 +121,12 @@ public class MenuPerangkat extends javax.swing.JPanel {
                 case 4: column.setPreferredWidth(100); break;
                 case 5: column.setPreferredWidth(80); break;
                 case 6: column.setPreferredWidth(100); break;
-                  case 7: column.setPreferredWidth(100); break;
             }
         }
     }
 
     private void tampilData() {
-           model.removeAllRows();
+        model.removeAllRows();
         Connection c = null;
         Statement s = null;
         ResultSet r = null;
@@ -139,27 +138,26 @@ public class MenuPerangkat extends javax.swing.JPanel {
                 return;
             }
             s = c.createStatement();
-            String sql = "SELECT * FROM perangkat";
+            String sql = "SELECT * FROM kategori";
             r = s.executeQuery(sql);
 
             int rowCount = 0;
             while (r.next()) {
-                Object[] o = new Object[8];
-                o[0] = r.getString("device_id");
-                o[1] = r.getString("nama_perangkat");
-                o[2] = r.getString("device_type");
-                o[3] = r.getString("serial_number");
-                o[4] = r.getString("merk");
-                o[5] = r.getString("model");
-                o[6] = r.getString("tgl_pembelian");
-                  o[7] = r.getString("status");
+                Object[] o = new Object[7];
+                o[0] = r.getString("id");
+                o[1] = r.getString("nip");
+                o[2] = r.getString("nama_kategori");
+                o[3] = r.getString("jabatan");
+                o[4] = r.getString("no_telp");
+                o[5] = r.getString("jenis_kelamin");
+                o[6] = r.getString("join_date");
                 model.addRow(Arrays.asList(o));
                 rowCount++;
             }
             if (rowCount == 0) {
-                System.out.println("Tabel perangkat kosong atau tidak ada data yang ditemukan.");
+                System.out.println("Tabel kategori kosong atau tidak ada data yang ditemukan.");
             } else {
-                System.out.println("Berhasil memuat " + rowCount + " baris data dari tabel perangkats.");
+                System.out.println("Berhasil memuat " + rowCount + " baris data dari tabel kategori.");
             }
         } catch (SQLException e) {
             System.err.println("Terjadi error menampilkan data di tabel: " + e.getMessage());
@@ -176,13 +174,10 @@ public class MenuPerangkat extends javax.swing.JPanel {
     }
 
     private void clearFields() { // Mengosongkan isian pada form
+        txt_nip.setText("");
         txt_nama.setText("");
-        txt_serial.setText("");
-        txt_merk.setText("");
-        txt_model.setText("");
-        txt_status.setText("");
-        tanggal.setDate(null);
-     cboTipe.setSelectedIndex(0);
+        txt_deskripsi.setText("");
+       
     }
 
     /**
@@ -194,7 +189,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
+        rb_Kelamin = new javax.swing.ButtonGroup();
         panelMain = new javax.swing.JPanel();
         panelView = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -202,11 +197,11 @@ public class MenuPerangkat extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         btnTambah = new Castom.JButtonCustom();
-        btnHapus = new Castom.JButtonCustom();
-        Searching = new Castom.JtextCustom();
         btnEdit = new Castom.JButtonCustom();
+        Searching = new Castom.JtextCustom();
+        btnHapus = new Castom.JButtonCustom();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablePerangkat = new Castom.JTableCastom1();
+        tableKategori = new Castom.JTableCastom1();
         panelAdd = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -214,21 +209,12 @@ public class MenuPerangkat extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         btnSimpan = new Castom.JButtonCustom();
         btnBatal = new Castom.JButtonCustom();
-        txt_nama = new Castom.JtextCustom();
+        txt_nip = new Castom.JtextCustom();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        txt_merk = new Castom.JtextCustom();
-        jLabel11 = new javax.swing.JLabel();
-        txt_model = new Castom.JtextCustom();
-        jLabel12 = new javax.swing.JLabel();
-        txt_status = new Castom.JtextCustom();
-        jLabel15 = new javax.swing.JLabel();
+        txt_deskripsi = new Castom.JtextCustom();
         jLabel16 = new javax.swing.JLabel();
-        txt_serial = new Castom.JtextCustom();
-        jLabel14 = new javax.swing.JLabel();
-        cboTipe = new javax.swing.JComboBox<>();
-        jLabel17 = new javax.swing.JLabel();
-        tanggal = new com.toedter.calendar.JDateChooser();
+        txt_nama = new Castom.JtextCustom();
 
         setLayout(new java.awt.CardLayout());
 
@@ -239,23 +225,42 @@ public class MenuPerangkat extends javax.swing.JPanel {
 
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel1.setText("Data Perangkat");
+        jLabel1.setText("Katgegori Masalah");
 
         jLabel2.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel2.setText("Master Data > Perangkat");
+        jLabel2.setText("Master Data > Kategori");
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/perangkatit.png"))); // NOI18N
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/kategori.png"))); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/perangkatit.png"))); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/kategori.png"))); // NOI18N
 
         btnTambah.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/add .png"))); // NOI18N
         btnTambah.setText("TAMBAH");
         btnTambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnTambahActionPerformed(evt);
+            }
+        });
+
+        btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/edit (2).png"))); // NOI18N
+        btnEdit.setText("EDIT");
+        btnEdit.setFillClick(new java.awt.Color(0, 153, 51));
+        btnEdit.setFillOriginal(new java.awt.Color(0, 255, 51));
+        btnEdit.setFillOver(new java.awt.Color(0, 153, 0));
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
+
+        Searching.setText("Search");
+        Searching.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
+        Searching.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchingActionPerformed(evt);
             }
         });
 
@@ -270,21 +275,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
             }
         });
 
-        Searching.setText("Search");
-        Searching.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
-
-        btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/edit (2).png"))); // NOI18N
-        btnEdit.setText("EDIT");
-        btnEdit.setFillClick(new java.awt.Color(0, 153, 51));
-        btnEdit.setFillOriginal(new java.awt.Color(0, 255, 51));
-        btnEdit.setFillOver(new java.awt.Color(0, 153, 0));
-        btnEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditActionPerformed(evt);
-            }
-        });
-
-        tablePerangkat.setModel(new javax.swing.table.DefaultTableModel(
+        tableKategori.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -295,7 +286,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tablePerangkat);
+        jScrollPane1.setViewportView(tableKategori);
 
         javax.swing.GroupLayout panelViewLayout = new javax.swing.GroupLayout(panelView);
         panelView.setLayout(panelViewLayout);
@@ -315,17 +306,17 @@ public class MenuPerangkat extends javax.swing.JPanel {
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel3)
-                                .addGap(10, 10, 10)
+                                .addGap(18, 18, 18)
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelViewLayout.createSequentialGroup()
                                 .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(23, 23, 23)
-                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
+                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(16, 16, 16)
                                 .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(211, 211, 211)
+                                .addGap(218, 218, 218)
                                 .addComponent(Searching, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)))
-                        .addGap(14, 14, 14))))
+                        .addGap(20, 20, 20))))
         );
         panelViewLayout.setVerticalGroup(
             panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -345,12 +336,12 @@ public class MenuPerangkat extends javax.swing.JPanel {
                 .addGap(27, 27, 27)
                 .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Searching, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 475, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(168, 168, 168))
+                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(57, 57, 57)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         panelMain.add(panelView, "card2");
@@ -359,21 +350,21 @@ public class MenuPerangkat extends javax.swing.JPanel {
 
         jLabel5.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel5.setText("Tambah Data Perangkat");
+        jLabel5.setText("Tambah Kategori Masalah");
 
         jLabel6.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel6.setText("Master Data > Perangkat");
+        jLabel6.setText("Master Data > Pegawai");
 
-        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/perangkatit.png"))); // NOI18N
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/kategori.png"))); // NOI18N
 
         jLabel8.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/perangkatit.png"))); // NOI18N
+        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/kategori.png"))); // NOI18N
 
         btnSimpan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/save1.png"))); // NOI18N
         btnSimpan.setText("SIMPAN");
-        btnSimpan.setFillOriginal(new java.awt.Color(0, 204, 255));
+        btnSimpan.setFillOriginal(new java.awt.Color(0, 153, 255));
         btnSimpan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSimpanActionPerformed(evt);
@@ -391,53 +382,29 @@ public class MenuPerangkat extends javax.swing.JPanel {
             }
         });
 
-        txt_nama.setText("Nama Perangkat");
-        txt_nama.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
+        txt_nip.setToolTipText("");
+        txt_nip.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
 
         jLabel9.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel9.setText("Nama Perangkat");
+        jLabel9.setText("NIP");
 
         jLabel10.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel10.setText("Merk");
+        jLabel10.setText("Deskripsi");
 
-        txt_merk.setText("Merk");
-        txt_merk.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
-
-        jLabel11.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel11.setText("Model");
-
-        txt_model.setText("Model");
-        txt_model.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
-
-        jLabel12.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel12.setText("Tanggal pembelian");
-
-        txt_status.setText("Status Perangkat");
-        txt_status.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
-
-        jLabel15.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jLabel15.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel15.setText("Status Perangkat");
+        txt_deskripsi.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
+        txt_deskripsi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_deskripsiActionPerformed(evt);
+            }
+        });
 
         jLabel16.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel16.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel16.setText("Nama");
 
-        txt_serial.setText("Nomor SN");
-        txt_serial.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
-
-        jLabel14.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jLabel14.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel14.setText("Jenis Perangkat");
-
-        cboTipe.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hardware", "accessories", "Network", "Other" }));
-
-        jLabel17.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jLabel17.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel17.setText("Nomor SN");
+        txt_nama.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
 
         javax.swing.GroupLayout panelAddLayout = new javax.swing.GroupLayout(panelAdd);
         panelAdd.setLayout(panelAddLayout);
@@ -445,35 +412,25 @@ public class MenuPerangkat extends javax.swing.JPanel {
             panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelAddLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel15)
-                    .addComponent(jLabel17)
-                    .addComponent(jLabel14)
-                    .addComponent(jLabel16)
-                    .addComponent(txt_serial, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10)
-                    .addComponent(txt_merk, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11)
-                    .addComponent(txt_model, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel12)
-                    .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(panelAddLayout.createSequentialGroup()
-                            .addComponent(jLabel8)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jLabel5)
-                            .addGap(600, 600, 600)
-                            .addComponent(jLabel7)
-                            .addGap(18, 18, 18)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelAddLayout.createSequentialGroup()
-                            .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(28, 28, 28)
-                            .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(txt_nama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cboTipe, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txt_status, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panelAddLayout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5)
+                        .addGap(600, 600, 600)
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelAddLayout.createSequentialGroup()
+                        .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txt_nip, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txt_nama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txt_deskripsi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20))
         );
         panelAddLayout.setVerticalGroup(
@@ -498,34 +455,16 @@ public class MenuPerangkat extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel9)
                 .addGap(13, 13, 13)
-                .addComponent(txt_nama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(jLabel14)
+                .addComponent(txt_nip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cboTipe, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(jLabel17)
-                .addGap(0, 0, 0)
                 .addComponent(jLabel16)
-                .addGap(10, 10, 10)
-                .addComponent(txt_serial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_nama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(13, 13, 13)
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_merk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(jLabel11)
-                .addGap(10, 10, 10)
-                .addComponent(txt_model, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addComponent(jLabel12)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15)
-                .addComponent(jLabel15)
-                .addGap(10, 10, 10)
-                .addComponent(txt_status, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(63, 63, 63))
+                .addComponent(txt_deskripsi, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         panelMain.add(panelAdd, "card2");
@@ -534,10 +473,10 @@ public class MenuPerangkat extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
-       clearFields();
+        clearFields();
         isEditMode = false;
-        editDeviceId = -1;
-        jLabel5.setText("Tambah Data Perangkat");
+        editUserId = -1;
+        jLabel5.setText("Tambah Data Pegawai");
         panelMain.removeAll();
         panelMain.add(panelAdd);
         panelMain.revalidate();
@@ -551,24 +490,19 @@ public class MenuPerangkat extends javax.swing.JPanel {
         panelMain.repaint();
     }//GEN-LAST:event_btnBatalActionPerformed
 
-    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+    private void SearchingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchingActionPerformed
         // TODO add your handling code here:
+    }//GEN-LAST:event_SearchingActionPerformed
+
+    private void txt_deskripsiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_deskripsiActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_deskripsiActionPerformed
+
+    private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+  String nip = txt_nip.getText();
         String nama = txt_nama.getText();
-        String serial = txt_serial.getText();
-        String tipe = cboTipe.getSelectedItem().toString();
-        String merk = txt_merk.getText();
-        String model_perangkat = txt_model.getText();
-        String status = txt_status.getText();
-        java.util.Date tanggal_beli = tanggal.getDate();
-
-        // Validasi input
-        if (nama.isEmpty() || serial.isEmpty() || tipe.isEmpty() || merk.isEmpty() || model_perangkat.isEmpty() || tanggal_beli == null || status.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Semua kolom harus diisi dengan data yang valid!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-   
-
+        String jabatan = txt_deskripsi.getText();
+        
         Connection c = null;
         PreparedStatement p = null;
         try {
@@ -580,44 +514,38 @@ public class MenuPerangkat extends javax.swing.JPanel {
 
             String sql;
             if (isEditMode) {
-                sql = "UPDATE perangkat SET nama_perangkat = ?, device_type = ?, serial_number = ?, merk = ?, model = ?, tgl_pembelian = ?, status = ? WHERE device_id = ?";
+                sql = "UPDATE kategori SET nip = ?, nama_kategori = ?, jabatan = ?, no_telp = ?, jenis_kelamin = ?, join_date = ? WHERE id = ?";
                 p = c.prepareStatement(sql);
-                p.setString(1, nama);
-                p.setString(2, tipe);
-                p.setString(3, serial);
-                p.setString(4, merk);
-                p.setString(5, model_perangkat);
-                p.setDate(6, new java.sql.Date(tanggal_beli.getTime()));
-                p.setString(7, status);
-                p.setInt(8, editDeviceId);
+                p.setString(1, nip);
+                p.setString(2, nama);
+                p.setString(3, jabatan);
+               
+                p.setInt(7, editUserId);
                 int rowsUpdated = p.executeUpdate();
                 if (rowsUpdated > 0) {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Data pegawai berhasil diperbarui!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                    javax.swing.JOptionPane.showMessageDialog(this, "Data kategori berhasil diperbarui!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Gagal memperbarui data pegawai!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    javax.swing.JOptionPane.showMessageDialog(this, "Gagal memperbarui data kategori!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                sql = "INSERT INTO perangkat (nama_perangkat, device_type, serial_number, merk, model, tgl_pembelian, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                sql = "INSERT INTO kategori (nip, nama_kategori, jabatan, no_telp, jenis_kelamin, join_date) VALUES (?, ?, ?, ?, ?, ?)";
                 p = c.prepareStatement(sql);
-                p.setString(1, nama);
-                p.setString(2, tipe);
-                p.setString(3, serial);
-                p.setString(4, merk);
-                p.setString(5, model_perangkat);
-                p.setDate(6, new java.sql.Date(tanggal_beli.getTime()));
-                p.setString(7, status);
+                p.setString(1, nip);
+                p.setString(2, nama);
+                p.setString(3, jabatan);
+                
                 int rowsInserted = p.executeUpdate();
                 if (rowsInserted > 0) {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Data perangkat berhasil ditambahkan!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                    javax.swing.JOptionPane.showMessageDialog(this, "Data kategori berhasil ditambahkan!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Gagal menambahkan data perangkat!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    javax.swing.JOptionPane.showMessageDialog(this, "Gagal menambahkan data kategori!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }
             }
             tampilData();
             clearFields();
             isEditMode = false;
-            editDeviceId = -1;
-            jLabel5.setText("Tambah Data Perangkat");
+            editUserId = -1;
+            jLabel5.setText("Tambah Data Pegawai");
             panelMain.removeAll();
             panelMain.add(panelView);
             panelMain.revalidate();
@@ -636,8 +564,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO add your handling code here:
-         int index = tablePerangkat.getSelectedRow();
+      int index = tableKategori.getSelectedRow();
 
         // Jika tidak ada baris terseleksi, tampilkan peringatan
         if (index == -1) {
@@ -646,31 +573,24 @@ public class MenuPerangkat extends javax.swing.JPanel {
         }
 
         // Ambil data dari baris yang dipilih
-        editDeviceId = Integer.parseInt(model.getValueAt(index, 0).toString()); // id
-        String nama = model.getValueAt(index, 1).toString();
-        String tipe = model.getValueAt(index, 2).toString();
-        String serial = model.getValueAt(index, 3).toString();
-        String merk = model.getValueAt(index, 4).toString();
-        String model_perangkat = model.getValueAt(index, 5).toString();
-         String tanggal_beli = model.getValueAt(index, 6).toString();
-        String status = model.getValueAt(index, 7).toString();
+        editUserId = Integer.parseInt(model.getValueAt(index, 0).toString()); // id
+        String nip = model.getValueAt(index, 1).toString();
+        String nama = model.getValueAt(index, 2).toString();
+        String jabatan = model.getValueAt(index, 3).toString();
+        String telepon = model.getValueAt(index, 4).toString();
+        String jenisKelamin = model.getValueAt(index, 5).toString();
+        String joinDate = model.getValueAt(index, 6).toString();
 
         // Isi field input dengan data
+        txt_nip.setText(nip);
         txt_nama.setText(nama);
-           cboTipe.setSelectedItem(tipe);
-        txt_serial.setText(serial);
-        txt_merk.setText(merk);
-           txt_model.setText(model_perangkat);
-        try {
-            tanggal.setDate(new java.text.SimpleDateFormat("yyyy-MM-dd").parse(tanggal_beli));
-        } catch (java.text.ParseException e) {
-            tanggal.setDate(null);
-        }
-            txt_status.setText(status);
+        txt_deskripsi.setText(jabatan);
+        
+        
 
         // Ubah judul panel dan beralih ke panelAdd
         isEditMode = true;
-        jLabel5.setText("Edit Data Perangkat");
+        jLabel5.setText("Edit Data Pegawai");
         panelMain.removeAll();
         panelMain.add(panelAdd);
         panelMain.revalidate();
@@ -679,8 +599,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
         // TODO add your handling code here:
-           // TODO add your handling code here:
-        int index = tablePerangkat.getSelectedRow();
+        int index = tableKategori.getSelectedRow();
 
         // Jika tidak ada baris terseleksi, tampilkan peringatan
         if (index == -1) {
@@ -699,7 +618,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
         try {
             id = Integer.parseInt(model.getValueAt(index, 0).toString());
         } catch (NumberFormatException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "ID perangkat tidak valid!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this, "ID kategori tidak valid!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -711,7 +630,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
                 return;
             }
 
-            String sql = "DELETE FROM perangkat WHERE device_id = ?";
+            String sql = "DELETE FROM kategori WHERE id = ?";
             PreparedStatement p = c.prepareStatement(sql);
             p.setInt(1, id);
             int rowsDeleted = p.executeUpdate();
@@ -719,10 +638,10 @@ public class MenuPerangkat extends javax.swing.JPanel {
             c.close();
 
             if (rowsDeleted > 0) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Data perangkat berhasil dihapus!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                javax.swing.JOptionPane.showMessageDialog(this, "Data kategori berhasil dihapus!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
                 tampilData(); // Muat ulang data dari database
             } else {
-                javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus data perangkat!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus data kategori!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
         } catch (SQLException e) {
             System.err.println("Error menghapus data dari database: " + e.getMessage());
@@ -738,16 +657,9 @@ public class MenuPerangkat extends javax.swing.JPanel {
     private Castom.JButtonCustom btnHapus;
     private Castom.JButtonCustom btnSimpan;
     private Castom.JButtonCustom btnTambah;
-    private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JComboBox<String> cboTipe;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -760,12 +672,10 @@ public class MenuPerangkat extends javax.swing.JPanel {
     private javax.swing.JPanel panelAdd;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
-    private Castom.JTableCastom1 tablePerangkat;
-    private com.toedter.calendar.JDateChooser tanggal;
-    private Castom.JtextCustom txt_merk;
-    private Castom.JtextCustom txt_model;
+    private javax.swing.ButtonGroup rb_Kelamin;
+    private Castom.JTableCastom1 tableKategori;
+    private Castom.JtextCustom txt_deskripsi;
     private Castom.JtextCustom txt_nama;
-    private Castom.JtextCustom txt_serial;
-    private Castom.JtextCustom txt_status;
+    private Castom.JtextCustom txt_nip;
     // End of variables declaration//GEN-END:variables
 }

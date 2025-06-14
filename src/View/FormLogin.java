@@ -34,7 +34,6 @@ public class FormLogin extends javax.swing.JFrame {
 
         panelCustom1 = new Castom.PanelCustom();
         panelCustom2 = new Castom.PanelCustom();
-        jLabel2 = new javax.swing.JLabel();
         jtextCustom1 = new Castom.JtextCustom();
         jpasswordCustom1 = new Castom.JpasswordCustom();
         jLabel3 = new javax.swing.JLabel();
@@ -42,6 +41,7 @@ public class FormLogin extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         btn_login = new Castom.JButtonCustom();
         jLabel1 = new javax.swing.JLabel();
+        lbgambar = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -69,13 +69,6 @@ public class FormLogin extends javax.swing.JFrame {
         panelCustom2.setRoundTopLeft(20);
         panelCustom2.setRoundTopRight(20);
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/close.png"))); // NOI18N
-        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel2MouseClicked(evt);
-            }
-        });
-
         jLabel3.setText("Username");
 
         jLabel4.setText("Password");
@@ -90,13 +83,20 @@ public class FormLogin extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/close.png"))); // NOI18N
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel1MouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelCustom2Layout = new javax.swing.GroupLayout(panelCustom2);
         panelCustom2.setLayout(panelCustom2Layout);
         panelCustom2Layout.setHorizontalGroup(
             panelCustom2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCustom2Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel2))
+                .addComponent(jLabel1))
             .addGroup(panelCustom2Layout.createSequentialGroup()
                 .addGap(44, 44, 44)
                 .addGroup(panelCustom2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -119,8 +119,8 @@ public class FormLogin extends javax.swing.JFrame {
         panelCustom2Layout.setVerticalGroup(
             panelCustom2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelCustom2Layout.createSequentialGroup()
-                .addComponent(jLabel2)
-                .addGap(67, 67, 67)
+                .addComponent(jLabel1)
+                .addGap(76, 76, 76)
                 .addComponent(jLabel5)
                 .addGap(25, 25, 25)
                 .addComponent(jLabel3)
@@ -132,13 +132,13 @@ public class FormLogin extends javax.swing.JFrame {
                 .addComponent(jpasswordCustom1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addComponent(btn_login, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 98, Short.MAX_VALUE))
+                .addGap(0, 89, Short.MAX_VALUE))
         );
 
         panelCustom1.add(panelCustom2, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, -1, 480, 540));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/It helpdesk (3).png"))); // NOI18N
-        panelCustom1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -30, 490, 560));
+        lbgambar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/It helpdesk (3).png"))); // NOI18N
+        panelCustom1.add(lbgambar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 490, 530));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -159,10 +159,6 @@ public class FormLogin extends javax.swing.JFrame {
        xx = evt.getX();
        xy = evt.getY();
     }//GEN-LAST:event_formMousePressed
-
-    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        dispose();
-    }//GEN-LAST:event_jLabel2MouseClicked
 
     private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
         int x = evt.getXOnScreen();
@@ -200,6 +196,10 @@ public class FormLogin extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btn_loginActionPerformed
+
+    private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+       dispose();
+    }//GEN-LAST:event_jLabel1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -240,12 +240,12 @@ public class FormLogin extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private Castom.JButtonCustom btn_login;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private Castom.JpasswordCustom jpasswordCustom1;
     private Castom.JtextCustom jtextCustom1;
+    private javax.swing.JLabel lbgambar;
     private Castom.PanelCustom panelCustom1;
     private Castom.PanelCustom panelCustom2;
     // End of variables declaration//GEN-END:variables
