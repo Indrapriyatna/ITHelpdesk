@@ -3,10 +3,11 @@ package Main;
 
 import View.FormLogin;
 import View.MenuDashboard;
-import View.MenuKategori;
-import View.MenuPegawai;
-import View.MenuPengguna;
-import View.MenuPerangkat;
+import View.Master.MenuKategori;
+import View.Master.MenuPegawai;
+import View.Master.MenuPengguna;
+import View.Master.MenuPerangkat;
+import View.Transaksi.Tiket;
 import config.Database;
 import java.awt.Color;
 import java.sql.Connection;
@@ -948,14 +949,25 @@ public class MenuUtama extends javax.swing.JFrame {
 
     private void btnTiketMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTiketMouseClicked
         // TODO add your handling code here:
+                 pn_btntiket.setBackground(new Color(240, 240, 240 ));
+         pn_line4.setBackground(new Color(0, 102, 153));
+         
+        pn_utama.removeAll();
+        pn_utama.add(new Tiket());
+        pn_utama.repaint();
+        pn_utama.revalidate();
     }//GEN-LAST:event_btnTiketMouseClicked
 
     private void btnTiketMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTiketMouseEntered
         // TODO add your handling code here:
+                pn_btntiket.setBackground(new Color(250, 250, 250 ));
+        pn_line4.setBackground(new Color(0, 102, 153));
     }//GEN-LAST:event_btnTiketMouseEntered
 
     private void btnTiketMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTiketMouseExited
         // TODO add your handling code here:
+                pn_btntiket.setBackground(new Color(255, 255, 255 ));
+        pn_line4.setBackground(new Color(255, 255, 255));
     }//GEN-LAST:event_btnTiketMouseExited
 
     private void btnKategoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKategoriMouseClicked

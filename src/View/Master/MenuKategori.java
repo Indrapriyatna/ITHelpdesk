@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package View;
+package View.Master;
 
 import config.Database;
 import java.sql.Connection;
@@ -11,13 +11,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
-import model.PegawaiModelDB;
+import model.Master.KategoriModelDB;
 /**
  *
  * @author Draaa
@@ -25,8 +26,8 @@ import model.PegawaiModelDB;
 public final class MenuKategori extends javax.swing.JPanel {
     private TableRowSorter sorter;
     private boolean isEditMode = false;
-    private int editUserId = -1;
-    PegawaiModelDB model = new PegawaiModelDB();
+    private int editCategoryId = -1;
+    KategoriModelDB model = new KategoriModelDB();
   
     /**
      * Creates new form menuDashboard
@@ -42,7 +43,7 @@ public final class MenuKategori extends javax.swing.JPanel {
     }
     
  public void filter() {
-        sorter = new TableRowSorter<PegawaiModelDB>(model);
+        sorter = new TableRowSorter<KategoriModelDB>(model);
         tableKategori.setRowSorter(sorter);
 
         // Tambahkan DocumentListener untuk filtering real-time
@@ -63,7 +64,7 @@ public final class MenuKategori extends javax.swing.JPanel {
             }
 
             private void newFilter() {
-                RowFilter<PegawaiModelDB, Object> rf = null;
+                RowFilter<KategoriModelDB, Object> rf = null;
                 String searchText = Searching.getText();
 
                 // Jangan filter jika teks adalah placeholder atau kosong
@@ -80,7 +81,7 @@ public final class MenuKategori extends javax.swing.JPanel {
 
                 try {
                     // Filter pada kolom NIP (1), Nama (2), dan Jabatan (3)
-                    rf = RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(searchText), 1, 2, 3);
+                    rf = RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(searchText), 1, 3, 4);
                 } catch (java.util.regex.PatternSyntaxException e) {
                     System.err.println("Error pada pola regex: " + e.getMessage());
                     return;
@@ -111,7 +112,7 @@ public final class MenuKategori extends javax.swing.JPanel {
     public void setKolomTabel() {
         // Mengatur lebar kolom untuk masing-masing kolom
         TableColumn column = null;
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 6; i++) {
             column = tableKategori.getColumnModel().getColumn(i);
             switch (i) {
                 case 0: column.setPreferredWidth(50); break;
@@ -120,65 +121,37 @@ public final class MenuKategori extends javax.swing.JPanel {
                 case 3: column.setPreferredWidth(100); break;
                 case 4: column.setPreferredWidth(100); break;
                 case 5: column.setPreferredWidth(80); break;
-                case 6: column.setPreferredWidth(100); break;
-            }
+                           }
         }
     }
 
     private void tampilData() {
-        model.removeAllRows();
-        Connection c = null;
-        Statement s = null;
-        ResultSet r = null;
-        try {
-            c = Database.getConnection();
-            if (c == null) {
-                System.err.println("Koneksi database gagal! Periksa konfigurasi database.");
-                javax.swing.JOptionPane.showMessageDialog(this, "Gagal terhubung ke database!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            s = c.createStatement();
-            String sql = "SELECT * FROM kategori";
-            r = s.executeQuery(sql);
-
-            int rowCount = 0;
-            while (r.next()) {
-                Object[] o = new Object[7];
-                o[0] = r.getString("id");
-                o[1] = r.getString("nip");
-                o[2] = r.getString("nama_kategori");
-                o[3] = r.getString("jabatan");
-                o[4] = r.getString("no_telp");
-                o[5] = r.getString("jenis_kelamin");
-                o[6] = r.getString("join_date");
-                model.addRow(Arrays.asList(o));
-                rowCount++;
-            }
-            if (rowCount == 0) {
-                System.out.println("Tabel kategori kosong atau tidak ada data yang ditemukan.");
-            } else {
-                System.out.println("Berhasil memuat " + rowCount + " baris data dari tabel kategori.");
-            }
-        } catch (SQLException e) {
-            System.err.println("Terjadi error menampilkan data di tabel: " + e.getMessage());
-            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        } finally {
-            try {
-                if (r != null) r.close();
-                if (s != null) s.close();
-                if (c != null) c.close();
-            } catch (SQLException e) {
-                System.err.println("Gagal menutup koneksi database: " + e.getMessage());
-            }
+  model.removeAllRows();
+    try (Connection c = Database.getConnection();
+         Statement s = c.createStatement();
+         ResultSet r = s.executeQuery("SELECT * FROM kategori_masalah")) {
+        while (r.next()) {
+            Object[] o = new Object[6];
+            o[0] = r.getString("id_kategori");
+            o[1] = r.getString("nama_kategori");
+            o[2] = r.getString("deskripsi");
+            o[3] = r.getString("prioritas");
+            o[4] = r.getString("sla_jam");
+            o[5] = r.getString("created_at");
+            model.addRow(Arrays.asList(o));
         }
+    } catch (SQLException e) {
+        System.err.println("Error loading data: " + e.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
     }
 
     private void clearFields() { // Mengosongkan isian pada form
-        txt_nip.setText("");
-        txt_nama.setText("");
-        txt_deskripsi.setText("");
-       
-    }
+    txt_sla.setText("");
+    txt_deskripsi.setText("");
+    cboKategori.setSelectedIndex(0);
+    cboPrioritas.setSelectedIndex(0);
+                          }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -189,7 +162,6 @@ public final class MenuKategori extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        rb_Kelamin = new javax.swing.ButtonGroup();
         panelMain = new javax.swing.JPanel();
         panelView = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -209,12 +181,14 @@ public final class MenuKategori extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         btnSimpan = new Castom.JButtonCustom();
         btnBatal = new Castom.JButtonCustom();
-        txt_nip = new Castom.JtextCustom();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         txt_deskripsi = new Castom.JtextCustom();
-        jLabel16 = new javax.swing.JLabel();
-        txt_nama = new Castom.JtextCustom();
+        jLabel11 = new javax.swing.JLabel();
+        cboPrioritas = new javax.swing.JComboBox<>();
+        cboKategori = new javax.swing.JComboBox<>();
+        jLabel12 = new javax.swing.JLabel();
+        txt_sla = new Castom.JtextCustom();
 
         setLayout(new java.awt.CardLayout());
 
@@ -277,13 +251,13 @@ public final class MenuKategori extends javax.swing.JPanel {
 
         tableKategori.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3", "Title 4", "Title 5", "Title 6"
             }
         ));
         jScrollPane1.setViewportView(tableKategori);
@@ -354,7 +328,7 @@ public final class MenuKategori extends javax.swing.JPanel {
 
         jLabel6.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel6.setText("Master Data > Pegawai");
+        jLabel6.setText("Master Data > Kategori");
 
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/kategori.png"))); // NOI18N
 
@@ -382,12 +356,9 @@ public final class MenuKategori extends javax.swing.JPanel {
             }
         });
 
-        txt_nip.setToolTipText("");
-        txt_nip.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
-
         jLabel9.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel9.setText("NIP");
+        jLabel9.setText("Kategori");
 
         jLabel10.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(102, 102, 102));
@@ -400,37 +371,57 @@ public final class MenuKategori extends javax.swing.JPanel {
             }
         });
 
-        jLabel16.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jLabel16.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel16.setText("Nama");
+        jLabel11.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel11.setText("Prioritas");
 
-        txt_nama.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
+        cboPrioritas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Rendah", "Sedang", "Tinggi", "Kritis" }));
+
+        cboKategori.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Perangkat Keras", "Perangkat Lunak", "Jaringan", " " }));
+
+        jLabel12.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel12.setText("SLA");
+
+        txt_sla.setFont(new java.awt.Font("SansSerif", 2, 18)); // NOI18N
+        txt_sla.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_slaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelAddLayout = new javax.swing.GroupLayout(panelAdd);
         panelAdd.setLayout(panelAddLayout);
         panelAddLayout.setHorizontalGroup(
             panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelAddLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelAddLayout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel5)
-                        .addGap(600, 600, 600)
-                        .addComponent(jLabel7)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelAddLayout.createSequentialGroup()
-                        .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(28, 28, 28)
-                        .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_nip, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_nama, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_deskripsi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(20, 20, 20)
+                        .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel11)
+                            .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(panelAddLayout.createSequentialGroup()
+                                    .addComponent(jLabel8)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel5)
+                                    .addGap(600, 600, 600)
+                                    .addComponent(jLabel7)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelAddLayout.createSequentialGroup()
+                                    .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(28, 28, 28)
+                                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txt_deskripsi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cboPrioritas, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel12)
+                            .addComponent(txt_sla, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panelAddLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(cboKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 1069, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(20, 20, 20))
         );
         panelAddLayout.setVerticalGroup(
@@ -454,16 +445,20 @@ public final class MenuKategori extends javax.swing.JPanel {
                     .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel9)
-                .addGap(13, 13, 13)
-                .addComponent(txt_nip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel16)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_nama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(13, 13, 13)
+                .addComponent(cboKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21)
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_deskripsi, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_deskripsi, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cboPrioritas, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_sla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -475,8 +470,8 @@ public final class MenuKategori extends javax.swing.JPanel {
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         clearFields();
         isEditMode = false;
-        editUserId = -1;
-        jLabel5.setText("Tambah Data Pegawai");
+        editCategoryId = -1;
+        jLabel5.setText("Tambah Data Kategori");
         panelMain.removeAll();
         panelMain.add(panelAdd);
         panelMain.revalidate();
@@ -499,68 +494,72 @@ public final class MenuKategori extends javax.swing.JPanel {
     }//GEN-LAST:event_txt_deskripsiActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-  String nip = txt_nip.getText();
-        String nama = txt_nama.getText();
-        String jabatan = txt_deskripsi.getText();
-        
-        Connection c = null;
-        PreparedStatement p = null;
-        try {
-            c = Database.getConnection();
-            if (c == null) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Koneksi ke database gagal!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+String deskripsi = txt_deskripsi.getText().trim();
+    String kategori = cboKategori.getSelectedItem().toString();
+    String prioritas = cboPrioritas.getSelectedItem().toString();
+    String sla = txt_sla.getText().trim();
 
-            String sql;
-            if (isEditMode) {
-                sql = "UPDATE kategori SET nip = ?, nama_kategori = ?, jabatan = ?, no_telp = ?, jenis_kelamin = ?, join_date = ? WHERE id = ?";
-                p = c.prepareStatement(sql);
-                p.setString(1, nip);
-                p.setString(2, nama);
-                p.setString(3, jabatan);
-               
-                p.setInt(7, editUserId);
-                int rowsUpdated = p.executeUpdate();
-                if (rowsUpdated > 0) {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Data kategori berhasil diperbarui!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Gagal memperbarui data kategori!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-                }
+    // Validate inputs
+    if (kategori.equals(" ") || deskripsi.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Nama kategori dan deskripsi harus diisi!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    if (!sla.matches("\\d+")) { // Ensure sla is a positive number as string
+        javax.swing.JOptionPane.showMessageDialog(this, "SLA harus berupa angka positif!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    try (Connection c = Database.getConnection()) {
+        if (c == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Koneksi ke database gagal!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String sql;
+        PreparedStatement p;
+        if (isEditMode) {
+            sql = "UPDATE kategori_masalah SET nama_kategori = ?, deskripsi = ?, prioritas = ?, sla_jam = ?, created_at = ? WHERE id_kategori = ?";
+            p = c.prepareStatement(sql);
+            p.setString(1, kategori);
+            p.setString(2, deskripsi);
+            p.setString(3, prioritas);
+            p.setString(4, sla);
+            p.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+            p.setInt(6, editCategoryId);
+            int rowsUpdated = p.executeUpdate();
+            if (rowsUpdated > 0) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Data kategori berhasil diperbarui!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
             } else {
-                sql = "INSERT INTO kategori (nip, nama_kategori, jabatan, no_telp, jenis_kelamin, join_date) VALUES (?, ?, ?, ?, ?, ?)";
-                p = c.prepareStatement(sql);
-                p.setString(1, nip);
-                p.setString(2, nama);
-                p.setString(3, jabatan);
-                
-                int rowsInserted = p.executeUpdate();
-                if (rowsInserted > 0) {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Data kategori berhasil ditambahkan!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Gagal menambahkan data kategori!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-                }
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal memperbarui data kategori!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
-            tampilData();
-            clearFields();
-            isEditMode = false;
-            editUserId = -1;
-            jLabel5.setText("Tambah Data Pegawai");
-            panelMain.removeAll();
-            panelMain.add(panelView);
-            panelMain.revalidate();
-            panelMain.repaint();
-        } catch (SQLException e) {
-            System.err.println("Error saat " + (isEditMode ? "memperbarui" : "menambah") + " data ke database: " + e.getMessage());
-            javax.swing.JOptionPane.showMessageDialog(this, "Gagal " + (isEditMode ? "memperbarui" : "menambah") + " data: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        } finally {
-            try {
-                if (p != null) p.close();
-                if (c != null) c.close();
-            } catch (SQLException e) {
-                System.err.println("Gagal menutup koneksi database: " + e.getMessage());
+        } else {
+            sql = "INSERT INTO kategori_masalah (nama_kategori, deskripsi, prioritas, sla_jam, created_at) VALUES (?, ?, ?, ?, ?)";
+            p = c.prepareStatement(sql);
+            p.setString(1, kategori);
+            p.setString(2, deskripsi);
+            p.setString(3, prioritas);
+            p.setString(4, sla);
+            p.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+            int rowsInserted = p.executeUpdate();
+            if (rowsInserted > 0) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Data kategori berhasil ditambahkan!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal menambahkan data kategori!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
         }
+        tampilData();
+        clearFields();
+        isEditMode = false;
+        editCategoryId = -1;
+        jLabel5.setText("Tambah Data Kategori");
+        panelMain.removeAll();
+        panelMain.add(panelView);
+        panelMain.revalidate();
+        panelMain.repaint();
+    } catch (SQLException e) {
+        System.err.println("Error saat " + (isEditMode ? "memperbarui" : "menambah") + " data: " + e.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal " + (isEditMode ? "memperbarui" : "menambah") + " data: " + e.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -573,24 +572,24 @@ public final class MenuKategori extends javax.swing.JPanel {
         }
 
         // Ambil data dari baris yang dipilih
-        editUserId = Integer.parseInt(model.getValueAt(index, 0).toString()); // id
-        String nip = model.getValueAt(index, 1).toString();
-        String nama = model.getValueAt(index, 2).toString();
-        String jabatan = model.getValueAt(index, 3).toString();
-        String telepon = model.getValueAt(index, 4).toString();
-        String jenisKelamin = model.getValueAt(index, 5).toString();
-        String joinDate = model.getValueAt(index, 6).toString();
+        editCategoryId = Integer.parseInt(model.getValueAt(index, 0).toString()); // id
+        String kategori = model.getValueAt(index, 1).toString();
+        String deskripsi = model.getValueAt(index, 2).toString();
+        String prioritas = model.getValueAt(index, 3).toString();
+        String sla = model.getValueAt(index, 4).toString();
+
 
         // Isi field input dengan data
-        txt_nip.setText(nip);
-        txt_nama.setText(nama);
-        txt_deskripsi.setText(jabatan);
+            cboKategori.setSelectedItem(kategori);
+            cboPrioritas.setSelectedItem(prioritas);
+        txt_deskripsi.setText(deskripsi);
+        txt_sla.setText(sla);
         
         
 
         // Ubah judul panel dan beralih ke panelAdd
         isEditMode = true;
-        jLabel5.setText("Edit Data Pegawai");
+        jLabel5.setText("Edit Data Kategori");
         panelMain.removeAll();
         panelMain.add(panelAdd);
         panelMain.revalidate();
@@ -630,7 +629,7 @@ public final class MenuKategori extends javax.swing.JPanel {
                 return;
             }
 
-            String sql = "DELETE FROM kategori WHERE id = ?";
+            String sql = "DELETE FROM kategori_masalah WHERE id_kategori = ?";
             PreparedStatement p = c.prepareStatement(sql);
             p.setInt(1, id);
             int rowsDeleted = p.executeUpdate();
@@ -649,6 +648,10 @@ public final class MenuKategori extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnHapusActionPerformed
 
+    private void txt_slaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_slaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_slaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private Castom.JtextCustom Searching;
@@ -657,9 +660,12 @@ public final class MenuKategori extends javax.swing.JPanel {
     private Castom.JButtonCustom btnHapus;
     private Castom.JButtonCustom btnSimpan;
     private Castom.JButtonCustom btnTambah;
+    private javax.swing.JComboBox<String> cboKategori;
+    private javax.swing.JComboBox<String> cboPrioritas;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -672,10 +678,8 @@ public final class MenuKategori extends javax.swing.JPanel {
     private javax.swing.JPanel panelAdd;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
-    private javax.swing.ButtonGroup rb_Kelamin;
     private Castom.JTableCastom1 tableKategori;
     private Castom.JtextCustom txt_deskripsi;
-    private Castom.JtextCustom txt_nama;
-    private Castom.JtextCustom txt_nip;
+    private Castom.JtextCustom txt_sla;
     // End of variables declaration//GEN-END:variables
 }

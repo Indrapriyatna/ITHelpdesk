@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model;
+package model.Master;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,19 +13,20 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author hp5cd
  */
-public class PenggunaModelDB extends AbstractTableModel {
+public class PerangkatModelDB extends AbstractTableModel {
     
     private List<String> columnNames = new ArrayList();
     private List<List> data = new ArrayList();
     
     {
         columnNames.add("Id");
-        columnNames.add("Username");
-        columnNames.add("Password");
-        columnNames.add("Role");
-        columnNames.add("Nama");
-        columnNames.add("Email");
-        columnNames.add("Created At");
+        columnNames.add("Nama Perangkat");
+        columnNames.add("Jenis Perangkat");
+        columnNames.add("Nomor Seri");
+        columnNames.add("Merek");
+        columnNames.add("Model");
+        columnNames.add("Tanggal");
+        columnNames.add("Status Barang");
         
     }
     

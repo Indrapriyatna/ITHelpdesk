@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package View;
+package View.Master;
 
 import config.Database;
 import java.sql.Connection;
@@ -18,7 +18,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
-import model.PenggunaModelDB;
+import model.Master.PenggunaModelDB;
 
 /**
  *
@@ -512,9 +512,14 @@ private void tampilData() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
+   clearFields();
+        isEditMode = false;
+        editUserId = -1;
+        jLabel5.setText("Tambah Data Pengguna");
         panelMain.removeAll();
         panelMain.add(panelAdd);
         panelMain.revalidate();
+        panelMain.repaint();
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void txt_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_passwordActionPerformed
@@ -522,9 +527,10 @@ private void tampilData() {
     }//GEN-LAST:event_txt_passwordActionPerformed
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        panelMain.removeAll();
+  panelMain.removeAll();
         panelMain.add(panelView);
         panelMain.revalidate();
+        panelMain.repaint();
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
