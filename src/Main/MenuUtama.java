@@ -7,7 +7,7 @@ import View.Master.MenuKategori;
 import View.Master.MenuPegawai;
 import View.Master.MenuPengguna;
 import View.Master.MenuPerangkat;
-import View.Transaksi.Tiket;
+import View.Transaksi.MenuTiket;
 import config.Database;
 import java.awt.Color;
 import java.sql.Connection;
@@ -43,7 +43,6 @@ public class MenuUtama extends javax.swing.JFrame {
             pn_btnPengguna.setEnabled(true);
             pn_btnPerangkat.setEnabled(false);
             pn_btnkategori.setEnabled(false);
-            // Disable Laporan menus
             pn_btnLaporanTiket.setEnabled(false);
             pn_btnLaporanPeminjaman.setEnabled(false);
             pn_btnLaporanPengadaan.setEnabled(false);
@@ -948,25 +947,25 @@ public class MenuUtama extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPegawaiMouseExited
 
     private void btnTiketMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTiketMouseClicked
-        // TODO add your handling code here:
-                 pn_btntiket.setBackground(new Color(240, 240, 240 ));
-         pn_line4.setBackground(new Color(0, 102, 153));
+      
+        pn_btntiket.setBackground(new Color(240, 240, 240 ));
+        pn_line4.setBackground(new Color(0, 102, 153));
          
         pn_utama.removeAll();
-        pn_utama.add(new Tiket());
+        pn_utama.add(new MenuTiket());
         pn_utama.repaint();
         pn_utama.revalidate();
     }//GEN-LAST:event_btnTiketMouseClicked
 
     private void btnTiketMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTiketMouseEntered
-        // TODO add your handling code here:
-                pn_btntiket.setBackground(new Color(250, 250, 250 ));
+        
+        pn_btntiket.setBackground(new Color(250, 250, 250 ));
         pn_line4.setBackground(new Color(0, 102, 153));
     }//GEN-LAST:event_btnTiketMouseEntered
 
     private void btnTiketMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTiketMouseExited
-        // TODO add your handling code here:
-                pn_btntiket.setBackground(new Color(255, 255, 255 ));
+        
+        pn_btntiket.setBackground(new Color(255, 255, 255 ));
         pn_line4.setBackground(new Color(255, 255, 255));
     }//GEN-LAST:event_btnTiketMouseExited
 

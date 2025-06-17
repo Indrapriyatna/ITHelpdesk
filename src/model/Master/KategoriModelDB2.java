@@ -3,12 +3,12 @@ package model.Master;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 
-public class KategoriModelDB extends DefaultTableModel {
+public class KategoriModelDB2 extends DefaultTableModel {
     private static final String[] COLUMN_NAMES = {
-        "ID Kategori", "Nama Kategori", "Deskripsi", "Prioritas", "SLA (Jam)", "Created At"
+        "ID Kategori", "Nama Kategori", "Deskripsi", "Prioritas"
     };
 
-    public KategoriModelDB() {
+    public KategoriModelDB2() {
         super(new Object[0][6], COLUMN_NAMES); // Initialize with empty data and column names
     }
 

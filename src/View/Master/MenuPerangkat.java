@@ -205,8 +205,8 @@ public class MenuPerangkat extends javax.swing.JPanel {
         btnHapus = new Castom.JButtonCustom();
         Searching = new Castom.JtextCustom();
         btnEdit = new Castom.JButtonCustom();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tablePerangkat = new Castom.JTableCastom1();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tablePerangkat = new Castom.JTable_Custom();
         panelAdd = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -295,7 +295,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(tablePerangkat);
+        jScrollPane2.setViewportView(tablePerangkat);
 
         javax.swing.GroupLayout panelViewLayout = new javax.swing.GroupLayout(panelView);
         panelView.setLayout(panelViewLayout);
@@ -304,9 +304,7 @@ public class MenuPerangkat extends javax.swing.JPanel {
             .addGroup(panelViewLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelViewLayout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())
+                    .addComponent(jScrollPane2)
                     .addGroup(panelViewLayout.createSequentialGroup()
                         .addGroup(panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(panelViewLayout.createSequentialGroup()
@@ -325,7 +323,8 @@ public class MenuPerangkat extends javax.swing.JPanel {
                                 .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(211, 211, 211)
                                 .addComponent(Searching, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)))
-                        .addGap(14, 14, 14))))
+                        .addGap(0, 19, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         panelViewLayout.setVerticalGroup(
             panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -348,9 +347,9 @@ public class MenuPerangkat extends javax.swing.JPanel {
                     .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Searching, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 475, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(168, 168, 168))
+                .addGap(57, 57, 57)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 579, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(49, Short.MAX_VALUE))
         );
 
         panelMain.add(panelView, "card2");
@@ -756,11 +755,11 @@ public class MenuPerangkat extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel panelAdd;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelView;
-    private Castom.JTableCastom1 tablePerangkat;
+    private Castom.JTable_Custom tablePerangkat;
     private com.toedter.calendar.JDateChooser tanggal;
     private Castom.JtextCustom txt_merk;
     private Castom.JtextCustom txt_model;
